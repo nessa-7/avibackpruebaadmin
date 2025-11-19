@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+// programa
+model Programa_de_formacion {
+  id_programa_formacion         Int      @id @default(autoincrement())
+  nombre      String @db.VarChar(50)
+  descripcion String  @db.VarChar(500)
+
+  categoriaId Int
+  categoria CATEGORIA @relation(fields: [categoriaId], references: [id])
+
+  ambienteId Int     @unique
+  ambiente   AMBIENTE @relation(fields: [ambienteId], references: [idAMBIENTE])
+
+  areaId                Int
+  area                  Area   @relation(fields: [areaId], references: [id_area])
+ 
+}
+//area
+model Area {
+  id_area         Int      @id @default(autoincrement())
+  nombre          String @db.VarChar(50)
+  descripcion     String  @db.VarChar(500)
+
+  programas   Programa_de_formacion[]
+
+  reporteId   Int
+  reporte     REPORTE @relation(fields: [reporteId], references: [idREPORTE])
+}
+
+
+
+
+//centro 
+model CENTRO{
+  idCENTRO  Int @id @default(autoincrement())
+  descripcion String @db.VarChar(500)
+
+  ambientes    AMBIENTE[]
+}
+//ambientes 
+model AMBIENTE {
+  idAMBIENTE    Int     @id @default(autoincrement())
+  descripcion   String  @db.VarChar(500)
+  caracteristicas String @db.VarChar(500)
+
+  programa Programa_de_formacion?
+
+  centroId Int
+  centro   CENTRO @relation(fields: [centroId], references: [idCENTRO])
+}
+
+//redes de conocimiento
+model Redes {
+  id          Int          @id @default(autoincrement())
+  descripcion String       @db.VarChar(500)
+
+  categorias  CATEGORIA[]
+}
+
+//categorias
+model CATEGORIA {
+  id          Int     @id @default(autoincrement())
+  descripcion String  @db.VarChar(500)
+  nombre      String  @db.VarChar(50)
+
+  redesid     Int
+  redes       Redes   @relation(fields: [redesid], references: [id])
+  programas   Programa_de_formacion[]
+}
+
+model TEST {
+  idTEST      Int     @id @default(autoincrement())
+  descripcion String  @db.VarChar(500)
+
+  reporte      REPORTE?
+
+  preguntas   preguntas[]
+
+}
+
+model REPORTE {
+  idREPORTE               Int      @id @default(autoincrement())
+  Fecha                   DateTime
+  ASPIRANTE_idASPIRANTE   Int
+
+  areas Area[]
+
+  TEST_idTEST      Int  @unique
+  test             TEST @relation(fields: [TEST_idTEST], references: [idTEST])
+
+  aspiranteId      Int
+  aspirante        Aspirante @relation(fields: [aspiranteId], references: [idASPIRANTE])
+}
+
+
+model Aspirante {
+  idASPIRANTE      Int     @id @default(autoincrement())
+  nombre_completo String  @db.VarChar(50)
+  correo          String  @db.VarChar(50)
+  telefono        String  @db.VarChar(10)
+
+  reportes         REPORTE[]
+
+}
+
+model preguntas {
+  idPREGUNTAS         Int      @id @default(autoincrement())
+  descripcion  String   @db.VarChar(500)
+
+  testId      Int
+  test        TEST    @relation(fields: [testId], references: [idTEST])
+
+  respuestas  respuestas[]
+
+}
+
+model respuestas {
+  idRESPUESTAS         Int      @id @default(autoincrement())
+  descripcion  String   @db.VarChar(500)
+
+  preguntaId   Int
+  pregunta     preguntas @relation(fields: [preguntaId], references: [idPREGUNTAS])
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+
+
+model Admin { 
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  email     String    @unique
+  password  String
+}

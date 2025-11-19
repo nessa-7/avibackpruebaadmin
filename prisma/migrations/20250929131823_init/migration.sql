@@ -1,0 +1,16 @@
+-- CreateTable
+CREATE TABLE `CENTRO` (
+    `idCENTRO` INTEGER NOT NULL AUTO_INCREMENT,
+    `descripcion` VARCHAR(500) NOT NULL,
+
+    PRIMARY KEY (`idCENTRO`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AMBIENTE` (
+    `idAMBIENTE` INTEGER NOT NULL AUTO_INCREMENT,
+    `descripcion` VARCHAR(500) NOT NULL,
+    `caracteristicas` VARCHAR(500) NOT NULL,
+
+    PRIMARY KEY (`idAMBIENTE`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
